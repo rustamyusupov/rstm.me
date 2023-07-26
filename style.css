@@ -1,0 +1,18 @@
+:root {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 1.25em;
+  line-height: 1.75;
+  margin: auto;
+  max-width: 70ch;
+  padding: 3em 1em;
+  text-align: center;
+}
+
+h1 {
+  margin: 0;
+}
+
+p {
+  color: #1d1d1d;
+  margin: 0;
+}
