@@ -1,0 +1,50 @@
+version: "3.3"
+services:
+  rstm:
+    container_name: rstm
+    restart: unless-stopped
+    image: ghcr.io/rustamyusupov/rstm.me:master
+    networks:
+      - traefik_rstm
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+      - "traefik.enable=true"
+      - "traefik.http.routers.rstm.entrypoints=web,websecure"
+      - "traefik.http.routers.rstm.rule=Host(`rstm.me`)"
+      - "traefik.http.routers.rstm.tls=true"
+      - "traefik.http.services.rstm.loadbalancer.server.port=8080"
+      - "traefik.http.routers.rstm.tls.certresolver=letsEncrypt"
+  traefik:
+    container_name: "traefik"
+    restart: unless-stopped
+    image: "traefik:v2.10"
+    networks:
+      - traefik_rstm
+    command:
+      - "--api.insecure=false"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.letsEncrypt.acme.tlschallenge=true"
+      - "--certificatesresolvers.letsEncrypt.acme.email=i@rstm.me"
+      - "--certificatesresolvers.letsEncrypt.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "./letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+  watchtower:
+    container_name: watchtower
+    restart: always
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --debug true --cleanup true --interval 30 rstm
+networks:
+  traefik_rstm:
