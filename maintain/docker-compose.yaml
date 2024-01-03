@@ -73,7 +73,7 @@ services:
     image: containrrr/watchtower
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    command: --debug true --cleanup true --interval 30 --label-enable
+    command: --debug true --cleanup true --interval 30 rstm wishes-front wishes-back
 
 networks:
   traefik_rstm:
