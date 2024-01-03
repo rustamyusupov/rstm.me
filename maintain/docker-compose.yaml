@@ -14,7 +14,7 @@ services:
       - "traefik.http.routers.rstm.tls=true"
       - "traefik.http.services.rstm.loadbalancer.server.port=8080"
       - "traefik.http.routers.rstm.tls.certresolver=letsEncrypt"
-  wishes:
+  wishes-front:
     container_name: wishes-front
     restart: unless-stopped
     image: ghcr.io/rustamyusupov/wishes-front:main
@@ -28,6 +28,20 @@ services:
       - "traefik.http.routers.wishes-front.tls=true"
       - "traefik.http.services.wishes-front.loadbalancer.server.port=8080"
       - "traefik.http.routers.wishes-front.tls.certresolver=letsEncrypt"
+  wishes-back:
+    container_name: wishes-back
+    restart: unless-stopped
+    image: ghcr.io/rustamyusupov/wishes-back:main
+    networks:
+      - traefik_rstm
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+      - "traefik.enable=true"
+      - "traefik.http.routers.wishes-back.entrypoints=web,websecure"
+      - "traefik.http.routers.wishes-back.rule=Host(`rstm.me`) && PathPrefix(`/wishes/api`)"
+      - "traefik.http.routers.wishes-back.tls=true"
+      - "traefik.http.services.wishes-back.loadbalancer.server.port=8080"
+      - "traefik.http.routers.wishes-back.tls.certresolver=letsEncrypt"
   traefik:
     container_name: "traefik"
     restart: unless-stopped
