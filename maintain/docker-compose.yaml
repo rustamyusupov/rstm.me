@@ -40,7 +40,7 @@ services:
       - "traefik.http.routers.wishes-back.entrypoints=web,websecure"
       - "traefik.http.routers.wishes-back.rule=Host(`rstm.me`) && PathPrefix(`/api`)"
       - "traefik.http.routers.wishes-back.tls=true"
-      - "traefik.http.services.wishes-back.loadbalancer.server.port=8080"
+      - "traefik.http.services.wishes-back.loadbalancer.server.port=3000"
       - "traefik.http.routers.wishes-back.tls.certresolver=letsEncrypt"
   traefik:
     container_name: "traefik"
