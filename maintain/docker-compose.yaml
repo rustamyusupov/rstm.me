@@ -32,6 +32,8 @@ services:
     container_name: wishes-back
     restart: unless-stopped
     image: ghcr.io/rustamyusupov/wishes-back:main
+    volumes:
+      - ~/db.json:/app/dist/db.json
     networks:
       - traefik_rstm
     labels:
