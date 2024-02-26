@@ -24,7 +24,7 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
       - "traefik.enable=true"
       - "traefik.http.routers.wishes-front.entrypoints=web,websecure"
-      - "traefik.http.routers.wishes-front.rule=Host(`rstm.me`) && PathPrefix(`/wishes`)"
+      - "traefik.http.routers.wishes-front.rule=Host(`wishes.rstm.me`)"
       - "traefik.http.routers.wishes-front.tls=true"
       - "traefik.http.services.wishes-front.loadbalancer.server.port=8080"
       - "traefik.http.routers.wishes-front.tls.certresolver=letsEncrypt"
