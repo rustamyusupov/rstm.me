@@ -42,7 +42,7 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
       - "traefik.enable=true"
       - "traefik.http.routers.wishes-back.entrypoints=web,websecure"
-      - "traefik.http.routers.wishes-back.rule=Host(`rstm.me`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.wishes-back.rule=Host(`wishes.rstm.me`) && PathPrefix(`/api`)"
       - "traefik.http.routers.wishes-back.tls=true"
       - "traefik.http.services.wishes-back.loadbalancer.server.port=9000"
       - "traefik.http.routers.wishes-back.tls.certresolver=letsEncrypt"
