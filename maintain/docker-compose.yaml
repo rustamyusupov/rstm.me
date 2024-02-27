@@ -36,8 +36,6 @@ services:
       - ~/db.json:/app/dist/db.json
     networks:
       - traefik_rstm
-    env_file:
-      - .env
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
       - "traefik.enable=true"
