@@ -19,7 +19,7 @@ services:
     restart: unless-stopped
     image: ghcr.io/rustamyusupov/wishes:main
     volumes:
-      - ~/data:/app/data
+      - ~/:/app/data
     networks:
       - traefik_rstm
     labels:
