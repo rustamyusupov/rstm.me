@@ -14,10 +14,10 @@ services:
       - "traefik.http.routers.rstm.tls=true"
       - "traefik.http.services.rstm.loadbalancer.server.port=8080"
       - "traefik.http.routers.rstm.tls.certresolver=letsEncrypt"
-  wishes:
-    container_name: wishes
+  wishlist:
+    container_name: wishlist
     restart: unless-stopped
-    image: ghcr.io/rustamyusupov/wishes:main
+    image: ghcr.io/rustamyusupov/wishlist:main
     volumes:
       - ~/:/app/data
     networks:
@@ -25,11 +25,11 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
       - "traefik.enable=true"
-      - "traefik.http.routers.wishes.entrypoints=web,websecure"
-      - "traefik.http.routers.wishes.rule=Host(`wishes.rstm.me`)"
-      - "traefik.http.routers.wishes.tls=true"
-      - "traefik.http.services.wishes.loadbalancer.server.port=8080"
-      - "traefik.http.routers.wishes.tls.certresolver=letsEncrypt"
+      - "traefik.http.routers.wishlist.entrypoints=web,websecure"
+      - "traefik.http.routers.wishlist.rule=Host(`wishlist.rstm.me`)"
+      - "traefik.http.routers.wishlist.tls=true"
+      - "traefik.http.services.wishlist.loadbalancer.server.port=8080"
+      - "traefik.http.routers.wishlist.tls.certresolver=letsEncrypt"
   traefik:
     container_name: "traefik"
     restart: unless-stopped
@@ -61,7 +61,7 @@ services:
     image: containrrr/watchtower
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    command: --debug true --cleanup true --interval 30 rstm wishes
+    command: --debug true --cleanup true --interval 30 rstm wishlist
 
 networks:
   traefik_rstm:
