@@ -14,6 +14,20 @@ services:
       - "traefik.http.routers.rstm.tls=true"
       - "traefik.http.services.rstm.loadbalancer.server.port=8080"
       - "traefik.http.routers.rstm.tls.certresolver=letsEncrypt"
+  timer:
+    container_name: timer
+    restart: unless-stopped
+    image: ghcr.io/rustamyusupov/timer:main
+    networks:
+      - traefik_rstm
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+      - "traefik.enable=true"
+      - "traefik.http.routers.timer.entrypoints=web,websecure"
+      - "traefik.http.routers.timer.rule=Host(`timer.rstm.me`)"
+      - "traefik.http.routers.timer.tls=true"
+      - "traefik.http.services.timer.loadbalancer.server.port=8080"
+      - "traefik.http.routers.timer.tls.certresolver=letsEncrypt"
   wishlist:
     container_name: wishlist
     restart: unless-stopped
@@ -61,7 +75,7 @@ services:
     image: containrrr/watchtower
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    command: --debug true --cleanup true --interval 30 rstm wishlist
+    command: --debug true --cleanup true --interval 30 rstm timer wishlist
 
 networks:
   traefik_rstm:
