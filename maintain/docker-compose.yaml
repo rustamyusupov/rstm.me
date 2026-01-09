@@ -14,6 +14,20 @@ services:
       - "traefik.http.routers.rstm.tls=true"
       - "traefik.http.services.rstm.loadbalancer.server.port=8080"
       - "traefik.http.routers.rstm.tls.certresolver=letsEncrypt"
+  life:
+    container_name: life
+    restart: unless-stopped
+    image: ghcr.io/rustamyusupov/life:master
+    networks:
+      - traefik_rstm
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+      - "traefik.enable=true"
+      - "traefik.http.routers.life.entrypoints=web,websecure"
+      - "traefik.http.routers.life.rule=Host(`life.rstm.me`)"
+      - "traefik.http.routers.life.tls=true"
+      - "traefik.http.services.life.loadbalancer.server.port=8080"
+      - "traefik.http.routers.life.tls.certresolver=letsEncrypt"
   timer:
     container_name: timer
     restart: unless-stopped
@@ -28,22 +42,6 @@ services:
       - "traefik.http.routers.timer.tls=true"
       - "traefik.http.services.timer.loadbalancer.server.port=8080"
       - "traefik.http.routers.timer.tls.certresolver=letsEncrypt"
-  shoplist:
-    container_name: shoplist
-    restart: unless-stopped
-    image: ghcr.io/rustamyusupov/shoplist:main
-    volumes:
-      - ~/:/app/data
-    networks:
-      - traefik_rstm
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
-      - "traefik.enable=true"
-      - "traefik.http.routers.shoplist.entrypoints=web,websecure"
-      - "traefik.http.routers.shoplist.rule=Host(`shoplist.rstm.me`)"
-      - "traefik.http.routers.shoplist.tls=true"
-      - "traefik.http.services.shoplist.loadbalancer.server.port=8080"
-      - "traefik.http.routers.shoplist.tls.certresolver=letsEncrypt"
   wishlist:
     container_name: wishlist
     restart: unless-stopped
@@ -91,7 +89,7 @@ services:
     image: containrrr/watchtower
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    command: --debug true --cleanup true --interval 30 rstm timer shoplist wishlist
+    command: --debug true --cleanup true --interval 30 rstm life timer wishlist
 
 networks:
   traefik_rstm:
