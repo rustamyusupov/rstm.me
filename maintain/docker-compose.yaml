@@ -61,7 +61,7 @@ services:
   traefik:
     container_name: "traefik"
     restart: unless-stopped
-    image: "traefik:v2.10"
+    image: "traefik:v3"
     networks:
       - traefik_rstm
     command:
