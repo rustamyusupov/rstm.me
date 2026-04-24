@@ -58,6 +58,25 @@ services:
       - "traefik.http.routers.wishlist.tls=true"
       - "traefik.http.services.wishlist.loadbalancer.server.port=8080"
       - "traefik.http.routers.wishlist.tls.certresolver=letsEncrypt"
+  intervals-bridge:
+    container_name: intervals-bridge
+    restart: unless-stopped
+    image: ghcr.io/rustamyusupov/intervals-bridge:master
+    env_file:
+      - /opt/intervals-bridge/.env
+    volumes:
+      - /opt/intervals-bridge/allowed-athlete-ids.txt:/app/config/allowed-athlete-ids.txt:ro
+      - /opt/intervals-bridge/data:/app/data
+    networks:
+      - traefik_rstm
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+      - "traefik.enable=true"
+      - "traefik.http.routers.intervals-bridge.entrypoints=web,websecure"
+      - "traefik.http.routers.intervals-bridge.rule=Host(`intervals.rstm.me`)"
+      - "traefik.http.routers.intervals-bridge.tls=true"
+      - "traefik.http.services.intervals-bridge.loadbalancer.server.port=8080"
+      - "traefik.http.routers.intervals-bridge.tls.certresolver=letsEncrypt"
   traefik:
     container_name: "traefik"
     restart: unless-stopped
@@ -89,7 +108,7 @@ services:
     image: containrrr/watchtower
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    command: --debug true --cleanup true --interval 30 rstm life timer wishlist
+    command: --debug true --cleanup true --interval 30 rstm life timer wishlist intervals-bridge
 
 networks:
   traefik_rstm:
