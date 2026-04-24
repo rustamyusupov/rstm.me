@@ -1,4 +1,3 @@
-version: "3.3"
 services:
   rstm:
     container_name: rstm
@@ -110,6 +109,7 @@ services:
       - DOCKER_API_VERSION=1.44
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - /root/.docker/config.json:/config.json:ro
     command: --debug true --cleanup true --interval 30 rstm life timer wishlist intervals-bridge
 
 networks:
