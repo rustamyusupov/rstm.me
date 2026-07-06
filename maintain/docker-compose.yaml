@@ -45,6 +45,10 @@ services:
     container_name: wishlist
     restart: unless-stopped
     image: ghcr.io/rustamyusupov/wishlist:main
+    environment:
+      - ORIGIN=https://wishlist.rstm.me
+    env_file:
+      - /opt/wishlist/.env
     volumes:
       - ~/:/app/data
     networks:
