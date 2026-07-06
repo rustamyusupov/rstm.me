@@ -114,7 +114,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /root/.docker/config.json:/config.json:ro
-    command: --debug true --cleanup true --interval 30 rstm life timer wishlist intervals-bridge
+    command: --cleanup true --interval 300 rstm life timer wishlist intervals-bridge
 
 networks:
   traefik_rstm:
