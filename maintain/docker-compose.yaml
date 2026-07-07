@@ -111,10 +111,12 @@ services:
     image: containrrr/watchtower
     environment:
       - DOCKER_API_VERSION=1.44
+    env_file:
+      - /opt/watchtower/.env
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /root/.docker/config.json:/config.json:ro
-    command: --cleanup true --interval 300 rstm life timer wishlist intervals-bridge
+    command: --cleanup --interval 300 rstm life timer wishlist intervals-bridge
 
 networks:
   traefik_rstm:
