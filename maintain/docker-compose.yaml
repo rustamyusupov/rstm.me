@@ -41,26 +41,24 @@ services:
       - "traefik.http.routers.timer.tls=true"
       - "traefik.http.services.timer.loadbalancer.server.port=8080"
       - "traefik.http.routers.timer.tls.certresolver=letsEncrypt"
-  wishlist:
-    container_name: wishlist
+  wish-web:
+    container_name: wish-web
     restart: unless-stopped
-    image: ghcr.io/rustamyusupov/wishlist:main
+    image: ghcr.io/rustamyusupov/wish-web:main
     environment:
-      - ORIGIN=https://wishlist.rstm.me
-    env_file:
-      - /opt/wishlist/.env
-    volumes:
-      - ~/:/app/data
+      - API_URL=http://wish-api:8080
+    depends_on:
+      - wish-api
     networks:
       - traefik_rstm
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
       - "traefik.enable=true"
-      - "traefik.http.routers.wishlist.entrypoints=web,websecure"
-      - "traefik.http.routers.wishlist.rule=Host(`wishlist.rstm.me`)"
-      - "traefik.http.routers.wishlist.tls=true"
-      - "traefik.http.services.wishlist.loadbalancer.server.port=8080"
-      - "traefik.http.routers.wishlist.tls.certresolver=letsEncrypt"
+      - "traefik.http.routers.wish-web.entrypoints=web,websecure"
+      - "traefik.http.routers.wish-web.rule=Host(`wishlist.rstm.me`)"
+      - "traefik.http.routers.wish-web.tls=true"
+      - "traefik.http.services.wish-web.loadbalancer.server.port=8080"
+      - "traefik.http.routers.wish-web.tls.certresolver=letsEncrypt"
   wish-api:
     container_name: wish-api
     restart: unless-stopped
@@ -150,7 +148,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /root/.docker/config.json:/config.json:ro
-    command: --cleanup --interval 300 rstm life timer wishlist wish-api intervals-bridge
+    command: --cleanup --interval 300 rstm life timer wish-web wish-api intervals-bridge
 
 networks:
   traefik_rstm:
