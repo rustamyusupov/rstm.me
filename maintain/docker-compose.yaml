@@ -66,7 +66,9 @@ services:
     environment:
       - RP_ID=wishlist.rstm.me
       - ORIGIN=https://wishlist.rstm.me
-      # PARSER_URL добавится вместе с сервисом wish-parse
+      - PARSER_URL=http://wish-parser:8080
+    depends_on:
+      - wish-parser
     env_file:
       - /opt/wish-api/.env
     volumes:
@@ -83,6 +85,16 @@ services:
       - "traefik.http.routers.wish-api.middlewares=wish-api-strip"
       - "traefik.http.middlewares.wish-api-strip.stripprefix.prefixes=/api"
       - "traefik.http.services.wish-api.loadbalancer.server.port=8080"
+  wish-parser:
+    container_name: wish-parser
+    restart: unless-stopped
+    image: ghcr.io/rustamyusupov/wish-parser:master
+    networks:
+      - traefik_rstm
+    mem_limit: 768m
+    shm_size: 256m
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
   intervals-bridge:
     container_name: intervals-bridge
     restart: unless-stopped
@@ -102,16 +114,6 @@ services:
       - "traefik.http.routers.intervals-bridge.tls=true"
       - "traefik.http.services.intervals-bridge.loadbalancer.server.port=8080"
       - "traefik.http.routers.intervals-bridge.tls.certresolver=letsEncrypt"
-  wish-parser:
-    container_name: wish-parser
-    image: ghcr.io/rustamyusupov/wish-parser:master
-    profiles: ["cron"]
-    environment:
-      - WISH_PARSER_DB_PATH=/app/data/wishlist.db
-    volumes:
-      - ~/:/app/data
-    mem_limit: 768m
-    shm_size: 256m
   traefik:
     container_name: "traefik"
     restart: unless-stopped
@@ -148,7 +150,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /root/.docker/config.json:/config.json:ro
-    command: --cleanup --interval 300 rstm life timer wish-web wish-api intervals-bridge
+    command: --cleanup --interval 300 rstm life timer wish-web wish-api wish-parser intervals-bridge
 
 networks:
   traefik_rstm:
