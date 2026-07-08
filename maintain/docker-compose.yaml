@@ -80,6 +80,16 @@ services:
       - "traefik.http.routers.intervals-bridge.tls=true"
       - "traefik.http.services.intervals-bridge.loadbalancer.server.port=8080"
       - "traefik.http.routers.intervals-bridge.tls.certresolver=letsEncrypt"
+  wish-parser:
+    container_name: wish-parser
+    image: ghcr.io/rustamyusupov/wish-parser:master
+    profiles: ["cron"]
+    environment:
+      - WISH_PARSER_DB_PATH=/app/data/wishlist.db
+    volumes:
+      - ~/:/app/data
+    mem_limit: 768m
+    shm_size: 256m
   traefik:
     container_name: "traefik"
     restart: unless-stopped
