@@ -61,6 +61,30 @@ services:
       - "traefik.http.routers.wishlist.tls=true"
       - "traefik.http.services.wishlist.loadbalancer.server.port=8080"
       - "traefik.http.routers.wishlist.tls.certresolver=letsEncrypt"
+  wish-api:
+    container_name: wish-api
+    restart: unless-stopped
+    image: ghcr.io/rustamyusupov/wish-api:main
+    environment:
+      - RP_ID=wishlist.rstm.me
+      - ORIGIN=https://wishlist.rstm.me
+      # PARSER_URL добавится вместе с сервисом wish-parse
+    env_file:
+      - /opt/wish-api/.env
+    volumes:
+      - /opt/wish-api/data:/app/data
+    networks:
+      - traefik_rstm
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+      - "traefik.enable=true"
+      - "traefik.http.routers.wish-api.entrypoints=web,websecure"
+      - "traefik.http.routers.wish-api.rule=Host(`wishlist.rstm.me`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.wish-api.tls=true"
+      - "traefik.http.routers.wish-api.tls.certresolver=letsEncrypt"
+      - "traefik.http.routers.wish-api.middlewares=wish-api-strip"
+      - "traefik.http.middlewares.wish-api-strip.stripprefix.prefixes=/api"
+      - "traefik.http.services.wish-api.loadbalancer.server.port=8080"
   intervals-bridge:
     container_name: intervals-bridge
     restart: unless-stopped
@@ -126,7 +150,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /root/.docker/config.json:/config.json:ro
-    command: --cleanup --interval 300 rstm life timer wishlist intervals-bridge
+    command: --cleanup --interval 300 rstm life timer wishlist wish-api intervals-bridge
 
 networks:
   traefik_rstm:
