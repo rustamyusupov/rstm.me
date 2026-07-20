@@ -95,6 +95,18 @@ services:
     shm_size: 256m
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
+  wish-bot:
+    container_name: wish-bot
+    restart: unless-stopped
+    image: ghcr.io/rustamyusupov/wish-bot:main
+    env_file:
+      - /opt/wish-bot/.env
+    depends_on:
+      - wish-api
+    networks:
+      - traefik_rstm
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
   intervals-bridge:
     container_name: intervals-bridge
     restart: unless-stopped
@@ -114,6 +126,24 @@ services:
       - "traefik.http.routers.intervals-bridge.tls=true"
       - "traefik.http.services.intervals-bridge.loadbalancer.server.port=8080"
       - "traefik.http.routers.intervals-bridge.tls.certresolver=letsEncrypt"
+  intervals-mcp:
+    container_name: intervals-mcp
+    restart: unless-stopped
+    image: ghcr.io/rustamyusupov/intervals-mcp:main
+    env_file:
+      - /opt/intervals-mcp/.env
+    volumes:
+      - /opt/intervals-mcp/data:/app/data
+    networks:
+      - traefik_rstm
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+      - "traefik.enable=true"
+      - "traefik.http.routers.intervals-mcp.entrypoints=web,websecure"
+      - "traefik.http.routers.intervals-mcp.rule=Host(`intervals-mcp.rstm.me`)"
+      - "traefik.http.routers.intervals-mcp.tls=true"
+      - "traefik.http.services.intervals-mcp.loadbalancer.server.port=8080"
+      - "traefik.http.routers.intervals-mcp.tls.certresolver=letsEncrypt"
   traefik:
     container_name: "traefik"
     restart: unless-stopped
@@ -150,7 +180,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /root/.docker/config.json:/config.json:ro
-    command: --cleanup --interval 300 rstm life timer wish-web wish-api wish-parser intervals-bridge
+    command: --cleanup --interval 300 rstm life timer wish-web wish-api wish-parser wish-bot intervals-bridge intervals-mcp
 
 networks:
   traefik_rstm:
