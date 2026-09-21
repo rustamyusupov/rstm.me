@@ -135,7 +135,8 @@ services:
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
       - "--entrypoints.websecure.address=:443"
-      - "--certificatesresolvers.letsEncrypt.acme.tlschallenge=true"
+      - "--certificatesresolvers.letsEncrypt.acme.httpchallenge=true"
+      - "--certificatesresolvers.letsEncrypt.acme.httpchallenge.entrypoint=web"
       - "--certificatesresolvers.letsEncrypt.acme.email=i@rstm.me"
       - "--certificatesresolvers.letsEncrypt.acme.storage=/letsencrypt/acme.json"
     ports:
