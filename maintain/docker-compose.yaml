@@ -13,6 +13,15 @@ services:
       - "traefik.http.routers.rstm.tls=true"
       - "traefik.http.services.rstm.loadbalancer.server.port=8080"
       - "traefik.http.routers.rstm.tls.certresolver=letsEncrypt"
+      - "traefik.http.routers.rstm-www.entrypoints=web,websecure"
+      - "traefik.http.routers.rstm-www.rule=Host(`www.rstm.me`)"
+      - "traefik.http.routers.rstm-www.tls=true"
+      - "traefik.http.routers.rstm-www.tls.certresolver=letsEncrypt"
+      - "traefik.http.routers.rstm-www.service=rstm"
+      - "traefik.http.routers.rstm-www.middlewares=rstm-www-redirect"
+      - "traefik.http.middlewares.rstm-www-redirect.redirectregex.regex=^https?://www\\.rstm\\.me/(.*)"
+      - "traefik.http.middlewares.rstm-www-redirect.redirectregex.replacement=https://rstm.me/$${1}"
+      - "traefik.http.middlewares.rstm-www-redirect.redirectregex.permanent=true"
   life:
     container_name: life
     restart: unless-stopped
