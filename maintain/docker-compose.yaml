@@ -119,6 +119,34 @@ services:
       - "traefik.http.routers.intervals-mcp.tls=true"
       - "traefik.http.services.intervals-mcp.loadbalancer.server.port=8080"
       - "traefik.http.routers.intervals-mcp.tls.certresolver=letsEncrypt"
+  google-health-mcp:
+    container_name: google-health-mcp
+    restart: unless-stopped
+    image: ghcr.io/rustamyusupov/google-health-mcp:main
+    env_file:
+      - /opt/google-health-mcp/.env
+    environment:
+      - PUBLIC_BASE_URL=https://google-health-mcp.rstm.me
+      - TRUST_PROXY=1
+    volumes:
+      - /opt/google-health-mcp/allowed-users.txt:/app/data/allowed-users.txt:ro
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - traefik_rstm
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+      - "traefik.enable=true"
+      - "traefik.http.routers.google-health-mcp.entrypoints=web,websecure"
+      - "traefik.http.routers.google-health-mcp.rule=Host(`google-health-mcp.rstm.me`)"
+      - "traefik.http.routers.google-health-mcp.tls=true"
+      - "traefik.http.services.google-health-mcp.loadbalancer.server.port=8080"
+      - "traefik.http.routers.google-health-mcp.tls.certresolver=letsEncrypt"
   traefik:
     container_name: "traefik"
     restart: unless-stopped
@@ -156,7 +184,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /root/.docker/config.json:/config.json:ro
-    command: --cleanup --interval 300 rstm life timer wish-web wish-api intervals-bridge intervals-mcp
+    command: --cleanup --interval 300 rstm life timer wish-web wish-api intervals-bridge intervals-mcp google-health-mcp
 
 networks:
   traefik_rstm:
