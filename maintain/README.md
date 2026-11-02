@@ -4,7 +4,7 @@ VPS configuration for rstm.me and related apps.
 
 ## Files
 
-- `docker-compose.yaml` → `/root/docker-compose.yaml` — all services: traefik (reverse proxy + Let's Encrypt), rstm, life, timer, wishlist, intervals-bridge, intervals-mcp, google-health-mcp, watchtower (auto-updates)
+- `docker-compose.yaml` → `/root/docker-compose.yaml` — all services: traefik (reverse proxy + Let's Encrypt), rstm, life, timer, wishlist, intervals-bridge, intervals-mcp, google-health-mcp, watchtower (auto-updates); health-sync runs from cron under the `jobs` profile
 - `daemon.json` → `/etc/docker/daemon.json` — container log rotation (10m × 3 files) and `live-restore` (containers survive docker daemon restarts)
 - `default.conf` — nginx config used inside the rstm image
 

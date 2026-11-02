@@ -156,6 +156,19 @@ services:
       - "traefik.http.routers.google-health-mcp.tls=true"
       - "traefik.http.services.google-health-mcp.loadbalancer.server.port=8080"
       - "traefik.http.routers.google-health-mcp.tls.certresolver=letsEncrypt"
+  health-sync:
+    image: ghcr.io/rustamyusupov/health-sync:main
+    profiles:
+      - jobs
+    volumes:
+      - /opt/health-sync/data:/app/data
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
   traefik:
     container_name: "traefik"
     restart: unless-stopped
